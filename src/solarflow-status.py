@@ -319,13 +319,9 @@ def zendure_mqtt_background_task():
 
     zendure_subscribe(client,auth)
     client.loop_start()
-    # request a time sync
-    payload = {
-        "messageId":"123",
-        "deviceId": auth.deviceKey,
-        "timestamp": int(time.time())
-    }
-    client.publish(f'/{auth.productKey}/{auth.deviceKey}/time-sync',json.dumps(payload))
+
+    # Request update of all topics
+    zendure_update()
 
 def local_mqtt_background_task():
     client = None
@@ -369,6 +365,11 @@ def set_zendure_limit(payload):
     global zendure_client
     zendure_client.publish(f'iot/{device_details["productKey"]}/{device_details["deviceKey"]}/properties/write', payload)
     log.info(f'Publishing online limit command: {payload}')
+
+def zendure_update(payload=json.dumps({"properties": ["getAll"]})):
+    global zendure_client
+    zendure_client.publish(f'iot/{device_details["productKey"]}/{device_details["deviceKey"]}/properties/read', payload)
+    log.info(f'Publishing read command: {payload}')
 
 @socketio.on('setLimit')
 def setLimit(msg):
