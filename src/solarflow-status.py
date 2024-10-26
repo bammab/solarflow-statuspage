@@ -33,6 +33,8 @@ ZEN_USER = config.get('zendure', 'login', fallback=None) or os.environ.get('ZEN_
 ZEN_PASSWD = config.get('zendure', 'password', fallback=None) or os.environ.get('ZEN_PASSWD',None)
 ZEN_API = config.get('zendure', 'zen_api', fallback=None) or os.environ.get('ZEN_API','https://app.zendure.tech/v2')
 ZEN_MQTT_HOST = config.get('zendure', 'zen_mqtt', fallback=None) or os.environ.get('ZEN_MQTT','mq.zen-iot.com')
+ZEN_MQTT_USER = "zenAPP"
+ZEN_MQTT_PWD = config.get('zendure', 'zen_mqtt_pwd', fallback=None) or os.environ.get('ZEN_MQTT_PWD','H6s$j9CtNa0N' if "eu" in ZEN_MQTT_HOST else 'oK#PCgy6OZxd')
 MQTT_HOST = config.get('local', 'mqtt_host', fallback=None) or os.environ.get('MQTT_HOST',None)
 MQTT_PORT = config.getint('local', 'mqtt_port', fallback=1883) or int(os.environ.get('MQTT_PORT',1883))
 MQTT_USER = config.get('local', 'mqtt_user', fallback=None) or os.environ.get('MQTT_USER',None)
@@ -242,7 +244,7 @@ def on_local_disconnect(client, userdata, rc):
 def connect_zendure_mqtt(client_id) -> mqtt_client:
     global zendure_client
     zendure_client = mqtt_client.Client(client_id=client_id, userdata="Zendure Production MQTT")
-    zendure_client.username_pw_set(username="zenApp", password="oK#PCgy6OZxd")
+    zendure_client.username_pw_set(username=ZEN_MQTT_USER, password=ZEN_MQTT_PWD)
     zendure_client.reconnect_delay_set(min_delay=1, max_delay=120)
     zendure_client.on_connect = on_connect
     zendure_client.on_disconnect = on_zendure_disconnect
