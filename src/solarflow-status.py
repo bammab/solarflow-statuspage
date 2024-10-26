@@ -164,6 +164,11 @@ def on_local_message(client, userdata, msg):
             log.info("Online mode: forwarding limit command to Zendure Cloud")
             set_zendure_limit(payload)
 
+    if "properties/read" in msg.topic:
+        if not offline_mode:
+            log.info("Online mode: forwarding read command to Zendure Cloud")
+            zendure_update(payload)
+
     if "batteries" in msg.topic:
         sn = msg.topic.split('/')[-2]
         if property not in  ["socLevel", "power","maxTemp"]:
@@ -277,6 +282,7 @@ def local_subscribe(client: mqtt_client):
     report_topic = f'/{device_details["productKey"]}/+/properties/report'
     log_topic = f'/{device_details["productKey"]}/+/log'
     iot_topic = f'iot/{device_details["productKey"]}/+/properties/write'
+    iot_topic_r = f'iot/{device_details["productKey"]}/+/properties/read'
     client.subscribe("solarflow-hub/telemetry/#")
     client.subscribe("solarflow-hub/control/#")
     client.subscribe("solarflow-hub/+/telemetry/#")
@@ -291,6 +297,7 @@ def local_subscribe(client: mqtt_client):
     client.subscribe(report_topic)
     client.subscribe(log_topic)
     client.subscribe(iot_topic)
+    client.subscribe(iot_topic_r)
     client.on_message = on_local_message
 
 def get_auth() -> ZenAuth:
