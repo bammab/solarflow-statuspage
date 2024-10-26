@@ -31,7 +31,8 @@ config = load_config()
 
 ZEN_USER = config.get('zendure', 'login', fallback=None) or os.environ.get('ZEN_USER',None)
 ZEN_PASSWD = config.get('zendure', 'password', fallback=None) or os.environ.get('ZEN_PASSWD',None)
-ZEN_API = config.get('zendure', 'zen_api', fallback='https://app.zendure.tech/v2') or os.environ.get('ZEN_API','https://app.zendure.tech/v2')
+ZEN_API = config.get('zendure', 'zen_api', fallback=None) or os.environ.get('ZEN_API','https://app.zendure.tech/v2')
+ZEN_MQTT_HOST = config.get('zendure', 'zen_mqtt', fallback=None) or os.environ.get('ZEN_MQTT','mq.zen-iot.com')
 MQTT_HOST = config.get('local', 'mqtt_host', fallback=None) or os.environ.get('MQTT_HOST',None)
 MQTT_PORT = config.getint('local', 'mqtt_port', fallback=1883) or int(os.environ.get('MQTT_PORT',1883))
 MQTT_USER = config.get('local', 'mqtt_user', fallback=None) or os.environ.get('MQTT_USER',None)
@@ -45,7 +46,7 @@ if MQTT_HOST is None:
 ZenAuth = namedtuple("ZenAuth",["productKey","deviceKey","clientId"])
 
 # MQTT broker where we subscribe to all the telemetry data we need to steer
-broker = config.get('zendure', 'zen_mqtt', fallback='mq.zen-iot.com') or os.environ.get('ZEN_MQTT','mq.zen-iot.com')
+broker = ZEN_MQTT_HOST
 port = 1883
 zendure_client: mqtt_client
 
